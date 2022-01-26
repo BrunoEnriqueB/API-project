@@ -1,0 +1,8 @@
+{
+  "name": "API",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/BrunoEnriqueB/ecommerce_project.git",
+  "author": "BrunoEnriqueB <brunobaronenrique@gmail.com>",
+  "license": "MIT"
+}
