@@ -10,11 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id       String @id @default(uuid())
-  name     String
-  email    String
-  phone    String
-  password String
+model User {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  phone      String
+  password   String
+  authorized Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 
+  @@map("users")
 }
