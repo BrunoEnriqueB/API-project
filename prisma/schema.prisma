@@ -20,5 +20,16 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
 
+  PasswordCode PasswordCode[]
   @@map("users")
+}
+
+model PasswordCode {
+  id        String   @id
+  id_user   String
+  user      User     @relation(fields: [id_user], references: [id])
+  code      String
+  expiresIn DateTime
+
+  @@map("passwordscodes")
 }
