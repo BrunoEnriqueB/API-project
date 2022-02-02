@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { prismaClient } from '../../database/prismaClient';
 import bcrypt from 'bcrypt';
-import createToken from '../../middlewares/createToken';
+import createToken from '../../services/createToken';
 
 export class LoginController {
   static async login (req: Request, res: Response) {
@@ -14,18 +14,24 @@ export class LoginController {
       return res.status(401).json({message: "Digite a senha!"});
     }
 
-    const user = await prismaClient.user.findUnique({where: {email: email}});
+    try {
+      const user = await prismaClient.user.findUnique({where: {email: email}});
 
-    if(!user) {
-      return res.status(401).json({message: "Não existe usuário com este email!"});
+      if(!user) {
+        return res.status(401).json({message: "Não existe usuário com este email!"});
+      }
+
+      const passwordsMatch = await bcrypt.compare(password, user.password);
+
+      if(!passwordsMatch) {
+        return res.status(401).json({message: "Senha inválida!"});
+      }
+      
+      return createToken(user, req, res);
+    } catch (error) {
+      return res.json({message: error});
     }
 
-    const passwordsMatch = await bcrypt.compare(password, user.password);
-
-    if(!passwordsMatch) {
-      return res.status(401).json({message: "Senha inválida!"});
-    }
     
-    return createToken(user, req, res);
   }
 }

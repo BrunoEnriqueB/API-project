@@ -26,7 +26,7 @@ model User {
 
 model PasswordCode {
   id        String   @id
-  id_user   String
+  id_user   String   @unique
   user      User     @relation(fields: [id_user], references: [id])
   code      String
   expiresIn DateTime

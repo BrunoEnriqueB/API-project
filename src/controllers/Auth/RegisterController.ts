@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { prismaClient } from '../../database/prismaClient';
 import bcrypt from 'bcrypt';
-import createToken from '../../middlewares/createToken';
+import createToken from '../../services/createToken';
 
 export class RegisterController {
   static async register (req: Request, res: Response) {
@@ -32,8 +32,7 @@ export class RegisterController {
       return res.status(422).json({message: "Já existe uma conta com este email!"});
     }
 
-    const salt = await bcrypt.genSalt(12);
-    const hashPassword = await bcrypt.hash(password, salt);
+    const hashPassword = await bcrypt.hash(password, 12);
 
     try {
       const user = await prismaClient.user.create({
@@ -47,7 +46,7 @@ export class RegisterController {
 
       createToken(user, req, res);
     } catch (error) {
-      console.log(error);
+      return res.json({message: error});
     }
 
     

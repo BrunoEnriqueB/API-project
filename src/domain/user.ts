@@ -1,8 +1,11 @@
 
-export default interface User {
-  name: string,
-  id: string,
+export interface userTokenData {
   email: string,
-  phone: string,
-  password: string
+  id: string
+}
+
+export interface userToDb {
+  email: string,
+  id: string
+  iat: number
 }

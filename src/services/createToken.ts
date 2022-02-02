@@ -1,17 +1,16 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
-import User from '../domain/user';
+import { userTokenData } from '../domain/user';
+import { userToDb } from '../domain/user'
 
-export default function createToken(user: User, req: Request, res: Response) {
+export default function createToken(user: userTokenData, req: Request, res: Response) {
   const token = jwt.sign({
-    name: user.name,
+    email: user.email,
     id: user.id
   }, process.env.JWT_SECRET!);
 
 
   res.status(200).json({
-    message: "Você está autenticado!",
     token: token,
-    userId: user.id,
   })
 }
