@@ -4,32 +4,32 @@ import bcrypt from 'bcrypt';
 import createToken from '../../services/createToken';
 
 export class RegisterController {
-  static async register (req: Request, res: Response) {
+  static async register(req: Request, res: Response) {
     const { name, email, phone, password, confirmpassword } = req.body;
 
-    if(!name) {
-      return res.status(401).json({message: "Digite o nome de usuário!"});
+    if (!name) {
+      return res.status(401).json({ message: "Digite o nome de usuário!" });
     }
-    if(!email) {
-      return res.status(401).json({message: "Digite o email!"});
+    if (!email) {
+      return res.status(401).json({ message: "Digite o email!" });
     }
-    if(!phone) {
-      return res.status(401).json({message: "Digite o número de telefone!"});
+    if (!phone) {
+      return res.status(401).json({ message: "Digite o número de telefone!" });
     }
-    if(!password) {
-      return res.status(401).json({message: "Digite a senha!"});
+    if (!password) {
+      return res.status(401).json({ message: "Digite a senha!" });
     }
-    if(!confirmpassword) {
-      return res.status(401).json({message: "Digite o confirmação de senha!"});
+    if (!confirmpassword) {
+      return res.status(401).json({ message: "Digite o confirmação de senha!" });
     }
-    if(password !== confirmpassword) {
-      return res.status(401).json({message: "As senhas não conferem!"});
+    if (password !== confirmpassword) {
+      return res.status(401).json({ message: "As senhas não conferem!" });
     }
 
-    const userExist = await prismaClient.user.findUnique({where: {email}});
-    
-    if(userExist) {
-      return res.status(422).json({message: "Já existe uma conta com este email!"});
+    const userExist = await prismaClient.user.findUnique({ where: { email } });
+
+    if (userExist) {
+      return res.status(422).json({ message: "Já existe uma conta com este email!" });
     }
 
     const hashPassword = await bcrypt.hash(password, 12);
@@ -46,9 +46,9 @@ export class RegisterController {
 
       createToken(user, req, res);
     } catch (error) {
-      return res.json({message: error});
+      return res.json({ message: error });
     }
 
-    
+
   }
 }

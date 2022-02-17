@@ -19,7 +19,7 @@ export class ForgotPasswordController {
     const user = await prismaClient.user.findUnique({ where: { email: email } });
 
     if (!user) {
-      return res.status(422).json({ message: "Email não encontrado!" });
+      return res.status(422).json({ message: "Email inválido!" });
     }
 
     let code = '';
@@ -83,7 +83,7 @@ export class ForgotPasswordController {
 
       return createToken(user, req, res);
     } catch (error) {
-      return res.status(400).json({message: "Algo falhou!"});
+      return res.status(400).json({ message: "Algo falhou!" });
     }
 
 
