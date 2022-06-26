@@ -1,6 +1,8 @@
 import { Request } from 'express';
 
 export default function getToken(req: Request) {
-  const authHeader = req.headers.authorization;
-  return authHeader?.split(' ')[1];
+  if (req.headers.authorization) {
+    const authHeader = req.headers.authorization;
+    return authHeader.split(' ')[1];
+  }
 }

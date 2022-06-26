@@ -1,5 +1,3 @@
-node_modules
-# Keep environment variables out of version control
 .env
-src/config/smpt.ts
-src/public/images/products/*
+src/config/smtp.ts
+node_modules

@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    ports:
+      - ${DB_PORT}:5432
+    restart: always
+    container_name: postgres-docker
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: m4st3rP4SS
+      POSTGRES_DB: vendinhas_dev
+  prisma:
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    container_name: prisma
+    command: >
+      bash -c '
+        npx prisma generate
+        npx prisma db push
+        npm start
+      '
+    image: prismagraphql/prisma:1.8
+    restart: always
+    ports:
+      - '4466:4466'
+    environment:
+      PRISMA_CONFIG: |
+        managementApiSecret: v3nd1nh4s
+        port: 4466
+        databases:
+          default:
+            connector: postgres
+            migrations: true
+            host: ${DB_DOCKER_HOST}
+            port: 5432
+            user: postgres
+            password: m4st3rP4SS
+  api:
+    build: .
+    restart: always
+    ports:
+      - '${API_PORT}:8080'
+    volumes:
+      - ./:/src/
+    #- nodemodules:/src/node_modules
+    depends_on:
+      - postgres

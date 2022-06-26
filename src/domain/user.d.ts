@@ -1,14 +1,11 @@
-import { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from 'jsonwebtoken';
 
-export interface userTokenData {
-  email: string,
-  id: string
+export interface userData {
+  email: string;
+  id: string;
 }
-
-export type userData = userTokenData | string | JwtPayload
-
 export interface userToDb {
-  email: string,
-  id: string
-  iat: number
+  email: string;
+  id: string;
+  iat: number;
 }

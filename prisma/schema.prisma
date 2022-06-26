@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,7 +17,7 @@ model User {
   phone      String
   password   String
   authorized Boolean  @default(false)
-  usertype   String   @default("normal")
+  userType   USERTYPE @default(USER)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
 
@@ -46,4 +46,9 @@ model Products {
   bar_code    String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+enum USERTYPE {
+  USER
+  ADMIN
 }
