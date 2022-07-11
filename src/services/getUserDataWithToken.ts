@@ -1,8 +1,16 @@
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
-import { response } from 'express';
+import { Request, response } from 'express';
 import { userData } from '../domain/user';
+import getToken from './getToken';
 
-export default async function getUserDataWithToken(token: string) {
+export default async function getUserDataWithToken(
+  req: Request
+): Promise<userData | undefined> {
+  const token = getToken(req);
+  if (!token) {
+    return;
+  }
+
   try {
     const userTokenData = jsonwebtoken.verify(
       token,

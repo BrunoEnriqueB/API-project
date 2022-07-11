@@ -1,19 +1,20 @@
-import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
+
+import { Request, Response } from 'express';
 
 import { prismaClient } from '../../database/prismaClient';
 
 import { sendEmailForPassword } from '../../helpers/sendEmail';
 
-import createToken from '../../services/createToken';
 import getToken from '../../services/getToken';
+import createToken from '../../services/createToken';
 import getUserDataWithToken from '../../services/getUserDataWithToken';
 export class ForgotPasswordController {
   static async forgotpassword(req: Request, res: Response) {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(422).json({ message: 'Insira o email!' });
+      return res.status(422).json({ message: 'Missing email' });
     }
 
     const user = await prismaClient.user.findUnique({
@@ -21,17 +22,17 @@ export class ForgotPasswordController {
     });
 
     if (!user) {
-      return res.status(422).json({ message: 'Email inválido!' });
+      return res.status(422).json({ message: "User doesn't exists!" });
     }
 
     let code = '';
-    let caracteres = '0123456789';
+    let characters = '0123456789';
     for (let i = 0; i < 5; i++) {
-      code += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+      code += characters.charAt(Math.floor(Math.random() * characters.length));
     }
 
     try {
-      const emailData = await sendEmailForPassword(user!, code);
+      const emailData = await sendEmailForPassword(user, code);
 
       const expiresIn = new Date();
       expiresIn.setHours(expiresIn.getHours() + 1);
@@ -45,9 +46,9 @@ export class ForgotPasswordController {
           expiresIn,
         },
         create: {
-          code,
-          id_user: user!.id,
           id: emailData!.messageId,
+          id_user: user.id,
+          code,
           expiresIn,
         },
       });
@@ -62,7 +63,7 @@ export class ForgotPasswordController {
     const { code, email } = req.body;
 
     if (!code) {
-      return res.status(422).json({ message: 'Digite o código!' });
+      return res.status(422).json({ message: 'Missing code!' });
     }
 
     try {
@@ -70,16 +71,16 @@ export class ForgotPasswordController {
         where: { email: email },
       });
       if (!user) {
-        return res.status(400).json({ message: 'Email não encontrado!' });
+        return res.status(400).json({ message: 'User not found!' });
       }
 
       const userCode = await prismaClient.passwordCode.findUnique({
         where: { id_user: user.id },
       });
 
-      /* if (userCode?.code !== code) {
-        return res.status(401).json({ message: "Código inválido!" });
-      } */
+      if (!userCode) {
+      }
+
       const expiresIn = new Date();
       expiresIn.setHours(expiresIn.getHours());
 
@@ -87,7 +88,8 @@ export class ForgotPasswordController {
         return res.status(401).json({ message: 'Código expirado!' });
       }
 
-      return createToken(user, req, res);
+      const token = createToken(user);
+      return res.status(200).json({ token });
     } catch (error) {
       return res.status(400).json({ message: 'Algo falhou!' });
     }
@@ -115,7 +117,7 @@ export class ForgotPasswordController {
       return res.status(401).json({ message: 'Senhas não compativeis' });
     }
 
-    const user = await getUserDataWithToken(token);
+    const user = await getUserDataWithToken(req);
     const hashPassword = await bcrypt.hash(password, 12);
 
     let email: string;

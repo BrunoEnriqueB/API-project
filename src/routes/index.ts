@@ -1,14 +1,17 @@
 import { Router } from 'express';
-import { router as AppRouter } from './AppRoutes';
-import { router as AuthRouter } from './AuthRoutes';
-import { router as AdminRouter } from './AdminRoutes';
+import AppRouter from './AppRoutes';
+import AuthRouter from './AuthRoutes';
+import AdminRouter from './AdminRoutes';
+import ProductRouter from './ProductRoutes';
+import isTokenValid from '../middlewares/isTokenValid';
 import verifySuperUser from '../middlewares/verifySuperUser';
 
 const router = Router();
 
-router.use('/user', AppRouter);
 router.use('/auth', AuthRouter);
-router.use('/admin', verifySuperUser, AdminRouter);
+router.use('/product', ProductRouter);
+router.use('/user', isTokenValid, AppRouter);
+router.use('/admin', isTokenValid, verifySuperUser, AdminRouter);
 
 router.use('/test', (req, res) => {
   return res.status(200).json({ message: 'Its working!' });
