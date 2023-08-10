@@ -1,15 +1,14 @@
 import { Router } from 'express';
+import { AuthController } from '../controllers/Auth/AuthController';
 import { ForgotPasswordController } from '../controllers/Auth/ForgotPasswordController';
-import { LoginController } from '../controllers/Auth/LoginController';
-import { RegisterController } from '../controllers/Auth/RegisterController';
-import verifyToken from '../middlewares/verifyToken';
 
 const router = Router();
 
-router.post('/login', LoginController.login);
-router.post('/register', RegisterController.register);
-router.post('/forgotpassword', ForgotPasswordController.forgotpassword);
+router.post('/login', AuthController.login);
+router.post('/register', AuthController.register);
 router.post('/resetpassword', ForgotPasswordController.resetPassword);
+router.post('/forgotpassword', ForgotPasswordController.forgotpassword);
+
 router.patch('/sendnewpassword', ForgotPasswordController.sendNewPassword);
 
-export { router };
+export default router;

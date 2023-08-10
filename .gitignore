@@ -1,3 +1,4 @@
 .env
 src/config/smtp.ts
 node_modules
+src/assets/images/products/*
